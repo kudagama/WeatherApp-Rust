@@ -1,14 +1,14 @@
-/* Tailwind CSS is loaded via CDN in index.html for this prototype */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Opacity Transition Helper */
+
 .transition-opacity {
   transition: opacity 0.4s ease-in-out;
 }
 
-/* Loading Spinner - Pulsing Ripple */
+
 .lds-ripple {
   display: inline-block;
   position: relative;
@@ -56,7 +56,7 @@
   }
 }
 
-/* Custom Animations if needed */
+
 @keyframes blob {
   0% { transform: translate(0px, 0px) scale(1); }
   33% { transform: translate(30px, -50px) scale(1.1); }

@@ -1,4 +1,4 @@
-// src-tauri/src/main.rs
+
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri::{
@@ -21,7 +21,7 @@ async fn fetch_weather_data<R: tauri::Runtime>(
     url_current: String,
     url_forecast: String,
 ) -> Result<String, String> {
-    // 1. Fetch Current Weather
+
     let res_current = reqwest::get(&url_current)
         .await
         .map_err(|e| e.to_string())?
@@ -29,7 +29,7 @@ async fn fetch_weather_data<R: tauri::Runtime>(
         .await
         .map_err(|e| e.to_string())?;
 
-    // 2. Fetch Forecast
+
     let res_forecast = reqwest::get(&url_forecast)
         .await
         .map_err(|e| e.to_string())?
@@ -37,16 +37,15 @@ async fn fetch_weather_data<R: tauri::Runtime>(
         .await
         .map_err(|e| e.to_string())?;
 
-    // 3. System Tray Update
+
     if let Some(name) = res_current["name"].as_str() {
         if let Some(temp) = res_current["main"]["temp"].as_f64() {
-             // Try to update tray title/tooltip if possible (impl dependent on OS)
-             // Simply setting the window title for now as visual feedback if tray text isn't ideal on all OS
+
              let _ = app.get_webview_window("main").expect("main window missing").set_title(&format!("{}: {:.1}°C", name, temp));
         }
     }
 
-    // 4. Check Severe Weather & Notify
+
     if let Some(weather_array) = res_current["weather"].as_array() {
         if let Some(first) = weather_array.first() {
             if let Some(main) = first["main"].as_str() {
@@ -108,7 +107,7 @@ fn main() {
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
-            // Initialize System Tray
+
             let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>).unwrap();
             let menu = Menu::with_items(app, &[&quit_i]).unwrap();
             

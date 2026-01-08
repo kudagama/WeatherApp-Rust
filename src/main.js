@@ -1,11 +1,11 @@
 const { invoke } = window.__TAURI__.core;
 
-// State
+
 let currentUnit = 'C'; // 'C' or 'F'
 let weatherData = null; // Store fetched data
 let chartInstance = null;
 
-// Clock
+
 function updateClock() {
   const now = new Date();
   document.getElementById('current-time').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -14,7 +14,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// Unit Conversion
+
 function toDisplayTemp(celsius) {
   if (currentUnit === 'F') {
     return Math.round((celsius * 9 / 5) + 32);
@@ -22,35 +22,34 @@ function toDisplayTemp(celsius) {
   return Math.round(celsius);
 }
 
-// UI Update
+
 function updateUI() {
   if (!weatherData) return;
   const { current, forecast } = weatherData;
 
-  // 1. Current Weather
+
   document.getElementById('city-name').innerText = current.name;
   document.getElementById('weather-description').innerText = current.weather[0].description;
 
-  // Icon
+
   const iconCode = current.weather[0].icon;
   const iconEl = document.getElementById('weather-icon');
   iconEl.src = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
   iconEl.classList.remove('hidden');
 
-  // Temperatures
+
   document.getElementById('temp-display').innerText = toDisplayTemp(current.main.temp);
   document.getElementById('unit-display').innerText = `°${currentUnit}`;
   document.getElementById('feels-like').innerText = toDisplayTemp(current.main.feels_like);
 
-  // Metrics
+
   document.getElementById('humidity').innerText = current.main.humidity;
   document.getElementById('wind-speed').innerText = Math.round(current.wind.speed * 3.6);
 
-  // 2. Forecast List (Next 5 items approx)
+
   const listEl = document.getElementById('forecast-list');
   listEl.innerHTML = '';
-  // Take every 8th item (approx 24h) or just next 5 3-hour chunks? Prompt said "5-day forecast grid" usually implies days, but let's show next 5 data points for detail or daily.
-  // Let's filter for one per day or just next 5 slots. Let's do one per day for the list.
+
   const dailyForecast = forecast.list.filter((item) => item.dt_txt.includes("12:00:00")).slice(0, 5);
 
   dailyForecast.forEach(day => {
@@ -69,7 +68,7 @@ function updateUI() {
     listEl.innerHTML += html;
   });
 
-  // 3. Chart (Next 24 hours -> 8 intervals of 3h)
+
   renderChart(forecast.list.slice(0, 8));
 }
 
@@ -110,13 +109,13 @@ function renderChart(dataPoints) {
   });
 }
 
-// Fetch Logic
+
 async function handleFetch(command, args) {
   const btn = document.getElementById('get-btn');
   const container = document.getElementById('weather-container');
   const spinner = document.getElementById('loading-spinner');
 
-  // UI Loading State
+
   const originalText = btn.innerText;
   btn.innerText = '...';
   container.classList.add('opacity-0');
@@ -136,7 +135,7 @@ async function handleFetch(command, args) {
   }
 }
 
-// Event Listeners
+
 document.getElementById('get-btn').addEventListener('click', () => {
   const city = document.getElementById('city-input').value;
   if (city) handleFetch('get_weather', { city });
@@ -164,7 +163,7 @@ document.getElementById('geo-btn').addEventListener('click', () => {
   }
 });
 
-// Unit Toggle
+
 document.getElementById('unit-toggle').addEventListener('change', (e) => {
   currentUnit = e.target.checked ? 'F' : 'C';
   updateUI(); // Re-render without fetch
